@@ -2,13 +2,18 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/player.dart';
 import '../models/prediction.dart';
+import '../services/tflite_service.dart';
 
 class ApiService {
   // Base URL for API
   final String baseUrl = 'https://api.playpulse.example.com/v1';  // Replace with your actual API URL
   
-  // For demo purposes, we'll use mock data instead of real API calls
+  // For demo purposes, we'll use mock data, but provide options for API and TFLite
   final bool useMockData = true;
+  final bool useTFLite = true;  // Set to true to use on-device inference instead of API
+  
+  // TFLite service
+  final TFLiteService _tfliteService = TFLiteService();
 
   // Get player by ID
   Future<Player> getPlayerById(int playerId) async {
@@ -71,8 +76,31 @@ class ApiService {
     }
   }
 
-  // Get player predictions
+  // Get player predictions using either API or on-device TFLite
   Future<List<Prediction>> getPlayerPredictions(int playerId) async {
+    // Get performances first (needed for both API and TFLite)
+    final performances = await getPlayerPerformances(playerId);
+    
+    if (performances.isEmpty) {
+      throw Exception('No performance data available for predictions');
+    }
+    
+    // Use on-device TFLite for predictions
+    if (useTFLite) {
+      try {
+        // Initialize TFLite service if not already initialized
+        await _tfliteService.initialize();
+        
+        // Use the last performance as input for prediction
+        final lastPerformance = performances.last;
+        return _tfliteService.predictAllMetrics(lastPerformance);
+      } catch (e) {
+        print('Error using TFLite for predictions: $e');
+        // Fall back to API or mock data if TFLite fails
+      }
+    }
+    
+    // If not using TFLite or TFLite failed, use API or mock data
     if (useMockData) {
       await Future.delayed(const Duration(milliseconds: 1200)); // Simulate network delay
       return _getMockPredictions(playerId);

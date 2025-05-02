@@ -1,39 +1,39 @@
-name: playpulse
-description: Player Performance Prediction System
+name: playpulse_app
+description: Player Performance Prediction System with TinyML
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' 
 
-# Version information
+# App version
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.18.0 <3.0.0"
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
+  cupertino_icons: ^1.0.5
   
-  # UI related
-  cupertino_icons: ^1.0.2
-  fl_chart: ^0.55.0
-  google_fonts: ^3.0.1
+  # UI Components
+  fl_chart: ^0.62.0
+  provider: ^6.0.5
+  shared_preferences: ^2.1.1
   
-  # State management
-  provider: ^6.0.3
+  # Networking
+  http: ^1.0.0
   
-  # Networking and storage
-  http: ^0.13.5
-  shared_preferences: ^2.0.15
+  # TFLite and ML
+  tflite_flutter: ^0.10.0 # For TensorFlow Lite models
+  path_provider: ^2.0.15  # For storing models
   
-  # Date and time
-  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^2.0.1
+
 
 # Flutter configuration
 flutter:
