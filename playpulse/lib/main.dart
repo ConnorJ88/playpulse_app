@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'config/theme.dart';
-import 'config/routes.dart';
 import 'services/auth_service.dart';
 import 'screens/login_page.dart';
 import 'screens/home_page.dart';
 import 'screens/player_search_page.dart';
 import 'screens/player_details_page.dart';
 import 'screens/settings_page.dart';
+import 'screens/player_id_help.dart';
 
 void main() {
   runApp(
@@ -37,6 +37,7 @@ class PlayPulseApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/search': (context) => const PlayerSearchScreen(),
         '/settings': (context) => const SettingsScreen(),
+        '/player_id_help': (context) => const PlayerIdHelpScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/player') {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../config/theme.dart';
+import 'player_id_help.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -11,8 +12,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _playerIdController = TextEditingController();
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -20,8 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _playerIdController.dispose();
     super.dispose();
   }
 
@@ -33,10 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       try {
-        await _authService.login(
-          _emailController.text.trim(),
-          _passwordController.text.trim(),
-        );
+        // Pass only the player ID to the login method
+        await _authService.login(_playerIdController.text.trim());
         // Navigate to home screen on successful login
         Navigator.of(context).pushReplacementNamed('/home');
       } catch (e) {
@@ -100,57 +97,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Email Field
+                      // Player ID Field
                       TextFormField(
-                        controller: _emailController,
+                        controller: _playerIdController,
                         decoration: const InputDecoration(
-                          labelText: 'Email',
+                          labelText: 'Player ID',
                           border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.email),
+                          prefixIcon: Icon(Icons.person),
+                          hintText: 'Enter player ID number',
                         ),
-                        keyboardType: TextInputType.emailAddress,
+                        keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your email';
+                            return 'Please enter a player ID';
                           }
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                            return 'Please enter a valid email';
+                          if (!RegExp(r'^\d+$').hasMatch(value)) {
+                            return 'Player ID must be a number';
                           }
                           return null;
                         },
-                      ),
-                      const SizedBox(height: 16),
-                      
-                      // Password Field
-                      TextFormField(
-                        controller: _passwordController,
-                        decoration: const InputDecoration(
-                          labelText: 'Password',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.lock),
-                        ),
-                        obscureText: true,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          if (value.length < 6) {
-                            return 'Password must be at least 6 characters';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      
-                      // Forgot Password Link
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {
-                            // Navigate to forgot password screen
-                          },
-                          child: const Text('Forgot Password?'),
-                        ),
                       ),
                       const SizedBox(height: 24),
                       
@@ -186,21 +151,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                 style: TextStyle(fontSize: 16),
                               ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
                       
-                      // Sign Up Link
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Don't have an account?"),
-                          TextButton(
-                            onPressed: () {
-                              // Navigate to registration screen
-                              Navigator.of(context).pushNamed('/register');
-                            },
-                            child: const Text('Sign Up'),
-                          ),
-                        ],
+                      // Help text
+                      const Text(
+                        'Enter your player ID to track performance analytics',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      
+                      // Help button
+                      TextButton(
+                        onPressed: () {
+                          // Navigate to player ID help screen
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const PlayerIdHelpScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text("Need Help Finding Your Player ID?"),
                       ),
                     ],
                   ),
